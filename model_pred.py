@@ -97,7 +97,8 @@ def pred(filePath='/electric-analyse/data/input/dataset_test.csv'):
     }
 
     # 梯度提升树预测
-    gbt_error = []
+    rmse = 0
+    mae = 0
     time_pred = time.time()
 
     for col in tload:
@@ -106,15 +107,14 @@ def pred(filePath='/electric-analyse/data/input/dataset_test.csv'):
         evaluator_rmse = RegressionEvaluator(labelCol=col, predictionCol='gbt_p_' + col, metricName="rmse")
         evaluator_mae = RegressionEvaluator(labelCol=col, predictionCol='gbt_p_' + col, metricName="mae")
         # RMSE、MAE计算
-        rmse = evaluator_rmse.evaluate(gbt_pred)
-        mae = evaluator_mae.evaluate(gbt_pred)
-        gbt_error.append([rmse, mae])
+        rmse += evaluator_rmse.evaluate(gbt_pred)
+        mae += evaluator_mae.evaluate(gbt_pred)
         # 保存预测结果
         pd_test_df['gbt_p_' + col] = gbt_pred.select('gbt_p_' + col).toPandas()
     time_pred = time.time() - time_pred
     evaluate_data['gbt'] = {
-        'avg_rmse': gbt_error.mean(axis=0)[0],
-        'avg_mae': gbt_error.mean(axis=0)[1],
+        'avg_rmse': rmse / 24,
+        'avg_mae': mae / 24,
         'time': time_pred / 24
     }
 
