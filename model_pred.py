@@ -71,7 +71,7 @@ def pred(filePath='/electric-analyse/data/input/dataset_test.csv'):
     evaluate_data['lr'] = {
         'avg_rmse': sum(lr_rmse) / len(lr_rmse),
         'avg_mae': sum(lr_mae) / len(lr_mae),
-        'time': time_pred / 24
+        'time': time_pred
     }
 
     # 随机森林预测
@@ -93,7 +93,7 @@ def pred(filePath='/electric-analyse/data/input/dataset_test.csv'):
     evaluate_data['rf'] = {
         'avg_rmse': rf_error.mean(axis=0)[0],
         'avg_mae': rf_error.mean(axis=0)[1],
-        'time': time_pred / 24
+        'time': time_pred
     }
 
     # 梯度提升树预测
@@ -115,7 +115,7 @@ def pred(filePath='/electric-analyse/data/input/dataset_test.csv'):
     evaluate_data['gbt'] = {
         'avg_rmse': rmse / 24,
         'avg_mae': mae / 24,
-        'time': time_pred / 24
+        'time': time_pred
     }
 
     pd_test_df = sqlContext.createDataFrame(pd_test_df)

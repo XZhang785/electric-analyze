@@ -61,7 +61,7 @@ def train(filePath='/electric-analyse/data/input/dataset_train.csv'):
     # 评估指标记录
     time_train = time.time() - temp
     evaluate_data['lr'] = {
-        'time': time_train / 24
+        'time': time_train
     }
 
     # 随机森林
@@ -73,7 +73,7 @@ def train(filePath='/electric-analyse/data/input/dataset_train.csv'):
         rf_model = rf.fit(train_df)
         rf_model.write().overwrite().save('model/rf/rf_model_' + col)
 
-    time_train = time.time() - temp
+    time_train = time.time()
 
     evaluate_data['rf'] = {
         'time': time_train / 24
@@ -88,7 +88,7 @@ def train(filePath='/electric-analyse/data/input/dataset_train.csv'):
 
     time_train = time.time() - temp
     evaluate_data['gbt'] = {
-        'time': time_train / 24
+        'time': time_train
     }
 
     print(evaluate_data)
