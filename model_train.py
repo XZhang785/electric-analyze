@@ -56,7 +56,7 @@ def train(filePath='/electric-analyse/data/input/dataset_train.csv'):
         lr = LinearRegression(labelCol=col, predictionCol='lr_' + col)
         lr_model = lr.fit(train_df)
         # 保存模型
-        lr_model.save('model/lr/lr_model_' + col)
+        lr_model.write().overwrite().save('model/lr/lr_model_' + col)
 
     # 评估指标记录
     time_train = time.time() - temp
@@ -71,7 +71,7 @@ def train(filePath='/electric-analyse/data/input/dataset_train.csv'):
 
         rf = RandomForestRegressor(labelCol=col, predictionCol='rf_p_' + col, maxDepth=8, seed=66)
         rf_model = rf.fit(train_df)
-        rf_model.save('model/rf/rf_model_' + col)
+        rf_model.write().overwrite().save('model/rf/rf_model_' + col)
 
     time_train = time.time() - temp
 
@@ -79,16 +79,12 @@ def train(filePath='/electric-analyse/data/input/dataset_train.csv'):
         'time': time_train / train_df.count()
     }
 
-    with open("train_time_data.json", "w") as fp:
-        json.dump(evaluate_data, fp)
-    print("OK")
-
     # 梯度提升树
     temp = time.time()
     for col in tload:
         gbt = GBTRegressor(labelCol=col, predictionCol='gbt_p_' + col, maxIter=10)
         gbt_model = gbt.fit(train_df)
-        gbt_model.save('model/gbt/gbt_model_' + col)
+        gbt_model.write().overwrite().save('model/gbt/gbt_model_' + col)
 
     time_train = time.time() - temp
     evaluate_data['gbt'] = {
@@ -96,6 +92,10 @@ def train(filePath='/electric-analyse/data/input/dataset_train.csv'):
     }
 
     print(evaluate_data)
+
+    with open("train_time_data.json", "w") as fp:
+        json.dump(evaluate_data, fp)
+    print("OK")
 
 
 if __name__ == "__main__":
