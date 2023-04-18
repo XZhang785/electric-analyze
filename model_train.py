@@ -61,7 +61,7 @@ def train(filePath='/electric-analyse/data/input/dataset_train.csv'):
     # 评估指标记录
     time_train = time.time() - temp
     evaluate_data['lr'] = {
-        'time': time_train / train_df.count()
+        'time': time_train / 24
     }
 
     # 随机森林
@@ -76,7 +76,7 @@ def train(filePath='/electric-analyse/data/input/dataset_train.csv'):
     time_train = time.time() - temp
 
     evaluate_data['rf'] = {
-        'time': time_train / train_df.count()
+        'time': time_train / 24
     }
 
     # 梯度提升树
@@ -88,7 +88,7 @@ def train(filePath='/electric-analyse/data/input/dataset_train.csv'):
 
     time_train = time.time() - temp
     evaluate_data['gbt'] = {
-        'time': time_train / train_df.count()
+        'time': time_train / 24
     }
 
     print(evaluate_data)
