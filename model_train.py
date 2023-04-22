@@ -1,28 +1,25 @@
 import data_Process
-from pyspark import SQLContext
-from pyspark.context import SparkContext
 from pyspark import SparkConf
-from pyspark.sql import SparkSession
+from pyspark.context import SparkContext
 from pyspark.ml.feature import VectorAssembler
-from pyspark.ml.regression import LinearRegression
-from pyspark.ml.regression import GBTRegressor
-from pyspark.ml.regression import RandomForestRegressor
+from pyspark.ml.regression import LinearRegression, GBTRegressor, RandomForestRegressor
+from pyspark.sql import SparkSession
 import json
 import time
 
 
 def train(filePath='/electric-analyse/data/input/dataset_train.csv'):
     sc = SparkContext('local')
-    sqlContext = SQLContext(sc)
-    spark = SparkSession.builder.config(conf=SparkConf()).config("spark.debug.maxToStringFields", "200").getOrCreate()
+    spark = SparkSession.builder.appName('Electricity Consumption Prediction').config(conf=SparkConf()).config(
+        "spark.debug.maxToStringFields", "200").getOrCreate()
+
+    # 读取 CSV 文件并转换为 Spark DataFrame
     data = spark.read.csv(filePath, header=True, inferSchema=True)
-
     df = data.toPandas()
-    # df = pd.read_csv('dataset_train.csv')
     df = data_Process.data_process(df)
-    sdf = sqlContext.createDataFrame(df)
-    # print(df.shape)
+    sdf = df.to_spark()
 
+    # 特征列
     mload, wload, dload, load, tload = [], [], [], [], []
     for i in range(24):
         mload.append('MLOAD' + str(i))
@@ -45,14 +42,11 @@ def train(filePath='/electric-analyse/data/input/dataset_train.csv'):
 
     evaluate_data = {}
     train_df = assembled
-    # print(train_df.count())
 
     # 线性回归
     temp = time.time()
     for col in tload:
-        print('lr_' + col)
         # 训练模型
-
         lr = LinearRegression(labelCol=col, predictionCol='lr_' + col)
         lr_model = lr.fit(train_df)
         # 保存模型
@@ -67,35 +61,35 @@ def train(filePath='/electric-analyse/data/input/dataset_train.csv'):
     # 随机森林
     temp = time.time()
     for col in tload:
-        # print('rf_p_' + Col)
-
+        # 训练模型
         rf = RandomForestRegressor(labelCol=col, predictionCol='rf_p_' + col, maxDepth=8, seed=66)
         rf_model = rf.fit(train_df)
+        # 保存模型
         rf_model.write().overwrite().save('model/rf/rf_model_' + col)
 
-    time_train = time.time()
-
+    # 评估指标记录
+    time_train = time.time() - temp
     evaluate_data['rf'] = {
-        'time': time_train / 24
+        'time': time_train
     }
 
     # 梯度提升树
     temp = time.time()
     for col in tload:
+        # 训练模型
         gbt = GBTRegressor(labelCol=col, predictionCol='gbt_p_' + col, maxIter=10)
         gbt_model = gbt.fit(train_df)
+        # 保存模型
         gbt_model.write().overwrite().save('model/gbt/gbt_model_' + col)
 
+    # 评估指标记录
     time_train = time.time() - temp
     evaluate_data['gbt'] = {
         'time': time_train
     }
 
-    print(evaluate_data)
-
     with open("train_time_data.json", "w") as fp:
         json.dump(evaluate_data, fp)
-    print("OK")
 
 
 if __name__ == "__main__":
