@@ -1,6 +1,7 @@
 import data_Process
 from pyspark import SparkConf
 from pyspark.context import SparkContext
+from pyspark.sql import SQLContext
 from pyspark.ml.feature import VectorAssembler
 from pyspark.ml.regression import LinearRegression, GBTRegressor, RandomForestRegressor
 from pyspark.sql import SparkSession
@@ -12,12 +13,12 @@ def train(filePath='/electric-analyse/data/input/dataset_train.csv'):
     sc = SparkContext('local')
     spark = SparkSession.builder.appName('Electricity Consumption Prediction').config(conf=SparkConf()).config(
         "spark.debug.maxToStringFields", "200").getOrCreate()
-
+    sql = SQLContext(sc)
     # 读取 CSV 文件并转换为 Spark DataFrame
     data = spark.read.csv(filePath, header=True, inferSchema=True)
     df = data.toPandas()
     df = data_Process.data_process(df)
-    sdf = df.to_spark()
+    sdf = sql.createDataFrame(df)
 
     # 特征列
     mload, wload, dload, load, tload = [], [], [], [], []
