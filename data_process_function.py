@@ -157,12 +157,12 @@ def dataS(df):
     Wcol = ("W" + col[0]).to_list()
     Dcol = ("D" + col[0]).to_list()
     Tcol = ("T" + col[0]).to_list()
-    Lcol = col[0].to_list()
+    Dcol = col[0].to_list()
 
     # 月数据处理（转化为前一个月的日期）
     m_stat_cycle = pd.DataFrame(pd.to_datetime(df['STAT_CYCLE']) - datetime.timedelta(days=31))  # 上个月的日期
     Mdf = pd.DataFrame(df[Mcol].apply(pd.to_numeric))  # 单独取出前一个月的数据
-    Mdf.columns = Lcol  # 把列名改为LOAD
+    Mdf.columns = Dcol  # 把列名改为LOAD
     Mdf.insert(loc=0, column='MP_ID', value=df['MP_ID'])  # 插入采集点的id
     Mdf.insert(loc=1, column='STAT_CYCLE', value=m_stat_cycle)  # 插入上个月的日期
     Mdf["ID"] = Mdf["MP_ID"].astype('str') + "," + Mdf["STAT_CYCLE"].astype('str')  # 创建key
@@ -171,7 +171,7 @@ def dataS(df):
     # 周数据处理（转化为前一周的日期）
     wSTAT_CYCLE = pd.DataFrame(pd.to_datetime(df['STAT_CYCLE']) - datetime.timedelta(days=7))
     Wdf = pd.DataFrame(df[Wcol].apply(pd.to_numeric))
-    Wdf.columns = Lcol
+    Wdf.columns = Dcol
     Wdf.insert(loc=0, column='MP_ID', value=df['MP_ID'])
     Wdf.insert(loc=1, column='STAT_CYCLE', value=wSTAT_CYCLE)
     Wdf["ID"] = Wdf["MP_ID"].astype('str') + "," + Wdf["STAT_CYCLE"].astype('str')
@@ -180,7 +180,7 @@ def dataS(df):
     # 前一日数据处理
     DSTAT_CYCLE = pd.DataFrame(pd.to_datetime(df['STAT_CYCLE']) - datetime.timedelta(days=1))
     Ddf = pd.DataFrame(df[Dcol].apply(pd.to_numeric))
-    Ddf.columns = Lcol
+    Ddf.columns = Dcol
     Ddf.insert(loc=0, column='MP_ID', value=df['MP_ID'])
     Ddf.insert(loc=1, column='STAT_CYCLE', value=DSTAT_CYCLE)
     Ddf["ID"] = Ddf["MP_ID"].astype('str') + "," + Ddf["STAT_CYCLE"].astype('str')
@@ -188,7 +188,7 @@ def dataS(df):
 
     # 当日数据
     LSTAT_CYCLE = pd.DataFrame(pd.to_datetime(df['STAT_CYCLE']))
-    Ldf = pd.DataFrame(df[Lcol].apply(pd.to_numeric))
+    Ldf = pd.DataFrame(df[Dcol].apply(pd.to_numeric))
     Ldf.insert(loc=0, column='MP_ID', value=df['MP_ID'])
     Ldf.insert(loc=1, column='STAT_CYCLE', value=LSTAT_CYCLE)
     Ldf["ID"] = Ldf["MP_ID"].astype('str') + "," + Ldf["STAT_CYCLE"].astype('str')
@@ -205,7 +205,7 @@ def dataS(df):
     LLdf['STAT_CYCLE'] = LLdf['STAT_CYCLE'] + datetime.timedelta(days=1)
     LLdf["ID"] = LLdf["MP_ID"].astype('str') + "," + LLdf["STAT_CYCLE"].astype('str')
     LLdf = LLdf.set_index('ID')
-    LLdf.columns = ['MP_ID', 'STAT_CYCLE'] + Lcol
+    LLdf.columns = ['MP_ID', 'STAT_CYCLE'] + Dcol
 
     # 计算明日数据
     TTdf = pd.DataFrame(DDdf)

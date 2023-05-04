@@ -39,8 +39,8 @@ def pred(filePath='/electric-analyse/data/input/dataset_test.csv'):
                   'ELECTRO_TYPE_0', 'ELECTRO_TYPE_100', 'ELECTRO_TYPE_101',
                   'ELECTRO_TYPE_201', 'ELECTRO_TYPE_202', 'ELECTRO_TYPE_203',
                   'ELECTRO_TYPE_300', 'ELECTRO_TYPE_401', 'ELECTRO_TYPE_402',
-                  'ELECTRO_TYPE_403', 'ELECTRO_TYPE_405', 'ELECTRO_TYPE_500', 'PCA_1',
-                  'PCA_2', 'PCA_3'] + dload + load
+                  'ELECTRO_TYPE_403', 'ELECTRO_TYPE_405', 'ELECTRO_TYPE_500',
+                  "WINDSPEED", "LAPSERATE", "AIRPRESSURE", "HUMIDITY", "PRECIPITATIONRANINFALL"] + dload + load
 
     assembler = VectorAssembler(inputCols=featureCol, outputCol="features")
     assembled = assembler.transform(sdf)
