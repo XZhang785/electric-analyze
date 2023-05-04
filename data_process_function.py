@@ -6,136 +6,171 @@ def get_timestamp(date):
     return datetime.datetime.strptime(date, "%Y/%m/%d").timestamp()
 
 
-def z_score_std(data_col: pd.DataFrame):
-    # Z-SCORE标准化
-    return (data_col - data_col.mean()) / data_col.std()
+def date_offset(date, offset, offset_type):
+    date = pd.to_datetime(date, format="%Y/%m/%d")
+    if offset_type == 'month':
+        date += pd.offsets.MonthOffset(offset)
+    elif offset_type == 'week':
+        date += pd.offsets.Week(offset)
+    elif offset_type == 'day':
+        date += pd.offsets.Day(offset)
+    return date.strftime("%Y/%m/%d")
 
 
-def max_min_std(data_col: pd.DataFrame):
-    #MAX-MIN标准化
-    return (data_col-data_col.min())/(data_col.max()-data_col.min())
-
-
-def my_std(df, col_names, mode):
-    # mode:'z-score':z_score_std;'max-min':max_min_std
-    df_tem = df
+def standardize(df, columns, mode):
     if mode == 'z-score':
-        for c in col_names:
-            df_tem[c] = z_score_std(df[c].values)
+        df[columns] = (df[columns] - df[columns].mean()) / df[columns].std()
     elif mode == 'max-min':
-        for c in col_names:
-            df_tem[c] = max_min_std(df[c].values)
-    return df_tem
+        df[columns] = (df[columns] - df[columns].min()) / (df[columns].max() - df[columns].min())
+    return df
+# def z_score_std(data_col: pd.DataFrame):
+#     # Z-SCORE标准化
+#     return (data_col - data_col.mean()) / data_col.std()
+#
+#
+# def max_min_std(data_col: pd.DataFrame):
+#     #MAX-MIN标准化
+#     return (data_col-data_col.min())/(data_col.max()-data_col.min())
+#
+#
+# def my_std(df, col_names, mode):
+#     # mode:'z-score':z_score_std;'max-min':max_min_std
+#     df_tem = df
+#     if mode == 'z-score':
+#         for c in col_names:
+#             df_tem[c] = z_score_std(df[c].values)
+#     elif mode == 'max-min':
+#         for c in col_names:
+#             df_tem[c] = max_min_std(df[c].values)
+#     return df_tem
 
 
-def date_back_month(date):
-    """
-    计算上一个月的日期
-    :param date:
-    :return:
-    """
-    x = date
-    x_year = x[0:x.find('/')]
-    x = x[x.find('/') + 1:len(x) + 1]
-    x_month = x[0:x.find('/')]
-    x_day = x[x.find('/') + 1:len(x) + 1]
-    if x_month == '1':
-        x_month = '12'
-        x_year = "%d" % (int(x_year) - 1)
-    else:
-        x_month = "%d" % (int(x_month) - 1)
-    return (x_year + '/' + x_month + '/' + x_day)
+# def date_back_month(date):
+#     """
+#     计算上一个月的日期
+#     :param date:
+#     :return:
+#     """
+#     x = date
+#     x_year = x[0:x.find('/')]
+#     x = x[x.find('/') + 1:len(x) + 1]
+#     x_month = x[0:x.find('/')]
+#     x_day = x[x.find('/') + 1:len(x) + 1]
+#     if x_month == '1':
+#         x_month = '12'
+#         x_year = "%d" % (int(x_year) - 1)
+#     else:
+#         x_month = "%d" % (int(x_month) - 1)
+#     return (x_year + '/' + x_month + '/' + x_day)
 
 
-def date_back_week(date):
-    """
-    计算上周的日期
-    :param date:
-    :return:
-    """
-    d = (datetime.datetime.strptime(date, "%Y/%m/%d") + datetime.timedelta(days=-7))
-    x = '{:%Y/%m/%d}'.format(d)
-    return x
+# def date_back_week(date):
+#     """
+#     计算上周的日期
+#     :param date:
+#     :return:
+#     """
+#     d = (datetime.datetime.strptime(date, "%Y/%m/%d") + datetime.timedelta(days=-7))
+#     x = '{:%Y/%m/%d}'.format(d)
+#     return x
 
 
-def date_back_day(date):
-    """
-    计算前天的日期
-    :param date:
-    :return:
-    """
-    d = (datetime.datetime.strptime(date, "%Y/%m/%d") + datetime.timedelta(days=-1))
-    x = '{:%Y/%m/%d}'.format(d)
-    return x
+# def date_back_day(date):
+#     """
+#     计算前天的日期
+#     :param date:
+#     :return:
+#     """
+#     d = (datetime.datetime.strptime(date, "%Y/%m/%d") + datetime.timedelta(days=-1))
+#     x = '{:%Y/%m/%d}'.format(d)
+#     return x
 
 
-def date_forward_month(date):
-    """
-    计算下个月的日期
-    :param date:
-    :return:
-    """
-    x = date
-    x_year = x[0:x.find('/')]
-    x = x[x.find('/') + 1:len(x) + 1]
-    x_month = x[0:x.find('/')]
-    x_day = x[x.find('/') + 1:len(x) + 1]
-    if x_month == '12':
-        x_month = '1'
-        x_year = "%d" % (int(x_year) + 1)
-    else:
-        x_month = "%d" % (int(x_month) + 1)
-    return (x_year + '/' + x_month + '/' + x_day)
+# def date_forward_month(date):
+#     """
+#     计算下个月的日期
+#     :param date:
+#     :return:
+#     """
+#     x = date
+#     x_year = x[0:x.find('/')]
+#     x = x[x.find('/') + 1:len(x) + 1]
+#     x_month = x[0:x.find('/')]
+#     x_day = x[x.find('/') + 1:len(x) + 1]
+#     if x_month == '12':
+#         x_month = '1'
+#         x_year = "%d" % (int(x_year) + 1)
+#     else:
+#         x_month = "%d" % (int(x_month) + 1)
+#     return (x_year + '/' + x_month + '/' + x_day)
 
 
-def date_forward_week(date):
-    """
-    计算下周的日期
-    :param date:
-    :return:
-    """
-    d = (datetime.datetime.strptime(date, "%Y/%m/%d") + datetime.timedelta(days=7))
-    x = '{:%Y/%m/%d}'.format(d)
-    return x
+# def date_forward_week(date):
+#     """
+#     计算下周的日期
+#     :param date:
+#     :return:
+#     """
+#     d = (datetime.datetime.strptime(date, "%Y/%m/%d") + datetime.timedelta(days=7))
+#     x = '{:%Y/%m/%d}'.format(d)
+#     return x
 
 
-def date_forward_day(date):
-    """
-    计算明天的日期
-    :param date:
-    :return:
-    """
-    d = (datetime.datetime.strptime(date, "%Y/%m/%d") + datetime.timedelta(days=1))
-    x = '{:%Y/%m/%d}'.format(d)
-    return x
+# def date_forward_day(date):
+#     """
+#     计算明天的日期
+#     :param date:
+#     :return:
+#     """
+#     d = (datetime.datetime.strptime(date, "%Y/%m/%d") + datetime.timedelta(days=1))
+#     x = '{:%Y/%m/%d}'.format(d)
+#     return x
 
 
 # 异常值处理
-def noisy_data_process(_df):
-    """
-    通过四分位法去除噪声，然后去除值为0的异常点
-    :param _df:
-    :return:
-    """
-    mload, wload, dload, load, tload = [], [], [], [], []
-    for i in range(24):
-        mload.append('MLOAD' + str(i))
-        wload.append('WLOAD' + str(i))
-        dload.append('DLOAD' + str(i))
-        load.append('LOAD' + str(i))
-        tload.append('TLOAD' + str(i))
-    column_temp = ["WINDSPEED", "LAPSERATE", "AIRPRESSURE", "HUMIDITY"] + mload + wload + dload + load
+# def noisy_data_process(_df):
+#     """
+#     通过四分位法去除噪声，然后去除值为0的异常点
+#     :param _df:
+#     :return:
+#     """
+#     mload, wload, dload, load, tload = [], [], [], [], []
+#     for i in range(24):
+#         mload.append('MLOAD' + str(i))
+#         wload.append('WLOAD' + str(i))
+#         dload.append('DLOAD' + str(i))
+#         load.append('LOAD' + str(i))
+#         tload.append('TLOAD' + str(i))
+#     column_temp = ["WINDSPEED", "LAPSERATE", "AIRPRESSURE", "HUMIDITY"] + mload + wload + dload + load
+#     # 四分位数法去除离群点
+#     for _col in column_temp:
+#         q1, q3 = _df[_col].quantile([0.25, 0.75])  # 计算四分位点
+#         iqr = q3 - q1
+#         _df = _df.drop(_df[(_df[_col] < q1 - iqr * 1.5) | (_df[_col] > q3 + iqr * 3)].index)
+#     # 去除0值
+#     _df = _df[~(_df[mload + wload + dload + load] == 0).all(axis=1)]
+#     return _df
+
+def remove_noise(df):
     # 四分位数法去除离群点
-    for _col in column_temp:
-        q1, q3 = _df[_col].quantile([0.25, 0.75])  # 计算四分位点
-        iqr = q3 - q1
-        _df = _df.drop(_df[(_df[_col] < q1 - iqr * 1.5) | (_df[_col] > q3 + iqr * 3)].index)
+    mload_cols = [f'MLOAD{i}' for i in range(24)]
+    wload_cols = [f'WLOAD{i}' for i in range(24)]
+    dload_cols = [f'DLOAD{i}' for i in range(24)]
+    load_cols = [f'LOAD{i}' for i in range(24)]
+    tload_cols = [f'TLOAD{i}' for i in range(24)]
+    columns = ["WINDSPEED", "LAPSERATE", "AIRPRESSURE", "HUMIDITY"] + mload_cols + wload_cols + dload_cols + load_cols
+    q1 = df[columns].quantile(0.25)
+    q3 = df[columns].quantile(0.75)
+    iqr = q3 - q1
+    df = df[~((df[columns] < (q1 - iqr * 1.5)) | (df[columns] > (q3 + iqr * 3))).any(axis=1)]
+
     # 去除0值
-    _df = _df[~(_df[mload + wload + dload + load] == 0).all(axis=1)]
-    return _df
+    df = df[~(df[mload_cols + wload_cols + dload_cols + load_cols] == 0).all(axis=1)]
+
+    return df
 
 
-def dataS(df):
+def fill_missing_values(df):
     """
     通过周期性数据去填充当日数据的缺失值，然后保留前一日和后一日的数据
     :param df:

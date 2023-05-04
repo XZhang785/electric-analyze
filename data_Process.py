@@ -5,7 +5,7 @@ from sklearn.decomposition import PCA  # 在sklearn中调用PCA机器学习算�
 
 def data_process(df):
     # df = pd.read_csv('dataset.csv')
-    df = noisy_data_process(df)  # 异常噪声处理
+    df = remove_noise(df)  # 异常噪声处理
 
     # 离散数据连续化-独热编码
     df1 = pd.get_dummies(df['AREA_NO'], sparse=True)
@@ -20,7 +20,7 @@ def data_process(df):
     df = df.join(df1).join(df2).join(df3)
 
     # 数据标准化
-    df = my_std(df, ["WINDSPEED", "LAPSERATE", "AIRPRESSURE", "HUMIDITY", "PRECIPITATIONRANINFALL"], 'max-min')
+    df = standardize(df, ["WINDSPEED", "LAPSERATE", "AIRPRESSURE", "HUMIDITY", "PRECIPITATIONRANINFALL"], 'max-min')
 
     # # 特征提取
     # df4 = df[["WINDSPEED", "LAPSERATE", "AIRPRESSURE", "HUMIDITY", "PRECIPITATIONRANINFALL"]]
@@ -33,6 +33,6 @@ def data_process(df):
     # df = df.join(df5)
 
     # 缺失值处理
-    ddf = dataS(df)
+    ddf = fill_missing_values(df)
 
     return ddf
