@@ -1,10 +1,7 @@
-import pandas as pd
 from data_process_function import *
-from sklearn.decomposition import PCA  # 在sklearn中调用PCA机器学习算法
 
 
 def data_process(df):
-    # df = pd.read_csv('dataset.csv')
     df = remove_noise(df)  # 异常噪声处理
 
     # 离散数据连续化-独热编码
@@ -21,16 +18,6 @@ def data_process(df):
 
     # 数据标准化
     df = standardize(df, ["WINDSPEED", "LAPSERATE", "AIRPRESSURE", "HUMIDITY", "PRECIPITATIONRANINFALL"], 'max-min')
-
-    # # 特征提取
-    # df4 = df[["WINDSPEED", "LAPSERATE", "AIRPRESSURE", "HUMIDITY", "PRECIPITATIONRANINFALL"]]
-    # data_rec = df4.values
-    # pca = PCA(n_components=3)  # 定义所需要分析主成分的个数n
-    # pca.fit(data_rec)  # 对基础数据集进行相关的计算，求取相应的主成分
-    # data_rec_reduction = pca.transform(data_rec)  # 进行数据的降维
-    #
-    # df5 = pd.DataFrame(data=data_rec_reduction, columns=["PCA_%d" % x for x in range(1, 4)])
-    # df = df.join(df5)
 
     # 缺失值处理
     ddf = fill_missing_values(df)
