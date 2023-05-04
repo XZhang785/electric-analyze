@@ -126,8 +126,6 @@ def pred(filePath='/electric-analyse/data/input/dataset_test.csv'):
     with open("evaluate_data.json", "w") as fp:
         json.dump(evaluate_data, fp)
 
-    print('OK')
-
 
 if __name__ == "__main__":
     pred()
