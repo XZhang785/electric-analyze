@@ -9,10 +9,9 @@ import json
 import time
 
 
-def train(filePath='/electric-analyse/data/input/dataset_train.csv'):
-    sc = SparkContext('local')
-    spark = SparkSession.builder.appName('Electricity Consumption Prediction').config(conf=SparkConf()).config(
-        "spark.debug.maxToStringFields", "200").getOrCreate()
+def train(spark, filePath='/electric-analyse/data/input/dataset_train.csv'):
+    spark = spark
+    sc = spark.sparkContext
     sql = SQLContext(sc)
     # 读取 CSV 文件并转换为 Spark DataFrame
     data = spark.read.csv(filePath, header=True, inferSchema=True)
@@ -94,4 +93,6 @@ def train(filePath='/electric-analyse/data/input/dataset_train.csv'):
 
 
 if __name__ == "__main__":
-    train()
+    spark = SparkSession.builder.master('spark://Master032004134:7077').appName("electric_analyze").getOrCreate()
+    spark.sparkContext.setLogLevel("Error")
+    train(spark)

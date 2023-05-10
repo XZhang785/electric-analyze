@@ -13,10 +13,10 @@ import json
 import time
 
 
-def pred(filePath='/electric-analyse/data/input/dataset_test.csv'):
-    sc = SparkContext('local')
+def pred(spark, filePath='/electric-analyse/data/input/dataset_test.csv'):
+    sc = spark.sparkContext
     sqlContext = SQLContext(sc)
-    spark = SparkSession.builder.config(conf=SparkConf()).getOrCreate()
+    spark = spark
     data = spark.read.csv(filePath, header=True, inferSchema=True)
 
     # df = pd.read_csv('dataset_test.csv')
@@ -128,4 +128,6 @@ def pred(filePath='/electric-analyse/data/input/dataset_test.csv'):
 
 
 if __name__ == "__main__":
-    pred()
+    spark = SparkSession.builder.master('spark://Master032004134:7077').appName("electric_analyze").getOrCreate()
+    spark.sparkContext.setLogLevel("Error")
+    pred(spark)
